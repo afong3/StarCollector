@@ -1,0 +1,2 @@
+# mapMatcher
+I love Pacific Spirit Park in Vancouver. I want to create a tool that gets me into the park as much as possible. The idea is that this app will tell me the portion of trails that I need to run in order to complete an entire lap of the park. Not sure if it will be a cmd line or a simple Python GUI. Main purpose is to make an easy to use tool that will get me outside and work on a fun GIS-esque project. 
