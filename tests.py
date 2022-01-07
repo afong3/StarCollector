@@ -254,8 +254,91 @@ def test_6():
 
     print("------- END TEST 6 -------")
 
+# Ok, this test creates a map for the hardcoded athlete_id, refresh_token, etc. 
+def test_7():
+    print("------- START TEST 7 -------")
+    # Retrieves access token for activity:read_all scope
+    trails_path = "data/trails"
+    P = classes.Park("data/trails")
+    E = classes.Efforts()
+    
+    E.get_activities_from_strava()
+    
+    df = global_functions.match_maps(E.lonlatList, P.points_by_id)
+        
+    points_total = 0 
+    points_total_matched = 0
 
+    for i in range(1, len(P.trail_names) + 1, 1):
+        trail_name = P.trail_names[i - 1] # -1 bedcause the df's trail count will be incremented length of total trails
+        trail = P.trail[trail_name]
+        trail_point_count = len(trail.points_list)
+        trail_match_count = len(df[df[2] == i])
+        P.trail[trail_name].points_matched = df[df[2] == i][[0,1]]
+        
+        points_total += trail_point_count
+        points_total_matched += trail_match_count
+        
+        
+    print("{prog} of {total} Achieved".format(prog = points_total_matched, total = points_total))
+    global_functions.create_map(P)
+    
+
+    print("------- END TEST 7 -------")
+
+# Have user log into strava, authorize the app, and take the refresh_token and athlete id
+def test_8():
+    print("------- START TEST 8 -------")
+
+    from urllib import request
+    import webbrowser
+    import requests
+    import os
+    from oauthlib.oauth2 import WebApplicationClient
+
+    client_id = 56934
+    client = WebApplicationClient(client_id)
+
+    authorization_url = "https://www.strava.com/oauth/authorize"
+
+    url = client.prepare_request_uri(
+    authorization_url,
+    redirect_uri = 'https://localhost',
+    scope = ['activity:read_all'],
+    state = 'D8VAo311AAl_49LAtM51HA'
+    )
+    
+    print(url)
+    
+    
+    # url = "https://www.strava.com/oauth/authorize?client_id=56934&redirect_uri=http%3A%2F%2Flocalhost&response_type=code&approval_prompt=auto&scope=activity:read_all#"
+    # response = webbrowser.open(url)
+    # print(response)
+    # response1 = request.urlopen(url)    
+    # print(response1.status)
+    # strava_login_url = response1.geturl()
+    # print(strava_login_url)
+    
+    # response2 = request.urlopen(strava_login_url)
+    # webbrowser.open(strava_login_url)
+    # print(response2.status)
+    # print(response2.geturl())
+    
+# Automatically opens the map made in a webbrowser
+def test_9():
+    print("------- START TEST 9 -------")
+    import webbrowser
+
+    map_path = "c:/code/python/mapMatcher/data/maps/map_01-07-2022.html"
+    
+    url = 'file://{}'.format((map_path))
+    print(url)
+    webbrowser.open(url,2)
+    
+
+    print("------- END TEST 9 -------")
 
 if __name__ == "__main__":
-    test_6()
+    test_7()
     
+# %%

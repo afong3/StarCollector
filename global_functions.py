@@ -83,7 +83,7 @@ def match_maps(gpx1, gpx2):
 
     labelled_pts = label_lat_lons(lat_lon_list)
         
-    tolerance = 0.00015 # this is from trial and error to get the right amount of overlapping data points
+    tolerance = 0.00017  # was previously 0.00015 this is from trial and error to get the right amount of overlapping data points 0.0002 is too big
     tree = scipy.spatial.KDTree(labelled_pts[:, :2])
     points_within_tolerance = tree.query_ball_point(labelled_pts[:, :2], tolerance)
 
