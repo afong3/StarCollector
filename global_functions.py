@@ -10,6 +10,8 @@ import folium
 import random
 import time
 from shapely.geometry.linestring import LineString
+from folium.plugins import BeautifyIcon
+
 
 # TODO: Change hardcoded bounds to be derived from all the trail gpx files 
 BB_LAT = [49.225, 49.285]
@@ -36,6 +38,10 @@ def gpx_to_lat_lon_list(filename):
         for route in gpx.routes:
             for point in route.points:
                 latlonlist.append([point.longitude, point.latitude])
+    elif len(gpx.waypoints) > 0:
+        for waypoint in gpx.waypoints:
+            latlonlist.append([waypoint.longitude, waypoint.latitude])
+        
     else:
         print("sorry mate, didn't care enough to implement this")
     return latlonlist
@@ -90,33 +96,10 @@ def match_maps(gpx1, gpx2):
     trail = pd.DataFrame(labelled_pts)
 
     diff_df = pd.merge(mp,trail, how = "inner", on = [0,1])
-    # plt.scatter(x = trail[0], y = trail[1], c = "r", alpha = 0.6, label = "Trail")
-    # #plt.scatter(x = df[0], y = df[1], c = df[2], alpha = 0.2)
-    # plt.scatter(x = diff_df[0], y = diff_df[1], c = "silver", label = "Portion of Trail Ran")
-    # # for clust_idx in set(clusters):
-    # #     plt.scatter(matching_points[clusters == clust_idx,0], matching_points[clusters == clust_idx,1], c = "pink", s = 50, alpha = 0.6)
-    # plt.xticks(rotation = 30)
-    # plt.ylabel("Latitude")
-    # plt.xlabel("Longitude")
-    # plt.title("Overlap of A Run and Trail")
-    # plt.legend()
-    # plt.show()
-    
-    # plt.scatter(x = df[df[2] == 0.0][0], y = df[df[2] == 0.0][1], c = "blue", label = "GPX Track of Activity")
-    # plt.scatter(x = trail[0], y = trail[1], c = "r", alpha = 0.6, label = "Trail")
-
-    # plt.xticks(rotation = 30)
-    # plt.ylabel("Latitude")
-    # plt.xlabel("Longitude")
-    # plt.title("Simple Plot of A GPX Recording")
-    # plt.legend()
-    # plt.show()
-        
-    # test_dist = calculate_distances(df[df[2] == 0.0][[0,1]])
+   
     trail_dist = calculate_distances(trail.copy())
     diff_dist = calculate_distances(diff_df.copy())
 
-    #print("Percent of Trail Completed: {0}".format(diff_dist / trail_dist))# %%
     return diff_df
     
 def calculate_distances(points_df: pd.DataFrame):
@@ -200,41 +183,80 @@ def randomHexColor():
 
 def create_map(P):
     crs = {'init': 'epsg:4326'}
-    startingLocation = [BB_LON[0], BB_LAT[0]]
+    startingLocation = [BB_LAT[0], BB_LON[0]]
     # print(self.lonPerActivity)
     # print(self.latPerActivity)
-    zoom = 1
-    trail_lines = {}
-    progress_lines = {}
+    zoom = 9
+    
+    icon_star = BeautifyIcon(
+    icon='star',
+    inner_icon_style='color:blue;font-size:30px;',
+    background_color='transparent',
+    border_color='transparent',
+    )
+
+    
     m = folium.Map(startingLocation, zoom_start = zoom, tiles = "cartodbpositron")
+    
+    fg_trail = folium.FeatureGroup(name = "All Stars", overlay = True, show = True)
+    fg_progress = folium.FeatureGroup(name = "Progress", overlay = True, show = True)
 
     # add iterative folium items to the map obect
     for trail_name in P.trail_names:
-                
+        
         trail = P.trail[trail_name]
         trail_lons = trail.points_array[:, 0]
         trail_lats = trail.points_array[:, 1]
-        progress_lons = trail.points_matched[0]
-        progress_lats = trail.points_matched[1]
+        progress_lons = trail.points_matched[0].reset_index(drop = True) # silly mistake by using pd and np
+        progress_lats = trail.points_matched[1].reset_index(drop = True)
+    
+        for idx in range(len(trail_lons)):
+            point = [trail_lats[idx], trail_lons[idx]]
+            
+            icon_star = BeautifyIcon(
+                icon='star',
+                inner_icon_style='color:#cc0000;font-size:15px;',
+                background_color='transparent',
+                border_color='transparent',
+            )
+            
+            folium.Marker(location = point, tooltip = trail_name, icon = icon_star, riseOnHover = True).add_to(fg_trail)
+            #folium.CircleMarker(location = point, name = trail_name, color = "#FF0000").add_to(fg_trail)
         
-        plt.scatter(x = progress_lons, y = progress_lats, c = "pink")
-        plt.show()
+        fg_trail.add_to(m)
         
-        line_geom_trail = LineString(zip(trail_lons, trail_lats))
-        line_geom_progress = LineString(zip(progress_lons, progress_lats))
         
-        trail_lines[trail_name] = gpd.GeoDataFrame(index = [0], crs = crs, geometry = [line_geom_trail])
-        progress_lines[trail_name] = gpd.GeoDataFrame(index = [0],crs = crs, geometry = [line_geom_progress])
+        if len(progress_lons) > 0:  
+            for idx in range(len(progress_lons)):
+                point = [progress_lats[idx], progress_lons[idx]]
+                
+                icon_star = BeautifyIcon(
+                    icon='star',
+                    inner_icon_style='color:#dfb10d;font-size:15px;',
+                    background_color='transparent',
+                    border_color='transparent',
+                )
+                
+                folium.Marker(location = point, tooltip = trail_name, icon = icon_star, riseOnHover = True).add_to(fg_progress)
+                #folium.CircleMarker(location = point, name = trail_name + " Progress", color = "#0000FF").add_to(fg_progress)
+                
+            fg_progress.add_to(m)            
+        
+        # line_geom_trail = LineString(zip(trail_lons, trail_lats))
+        # line_geom_progress = LineString(zip(progress_lons, progress_lats))
+        
+        # points_trail[trail_name] = gpd.GeoDataFrame(index = [0], crs = crs, geometry = [line_geom_trail])
+        # points_progress[trail_name] = gpd.GeoDataFrame(index = [0],crs = crs, geometry = [line_geom_progress])
         
         #randomCol = randomHexColor()
         #style = {'color': "blue"} 
         
-        #folium.GeoJson(trail_lines[trail_name], style_function = lambda x:style, control = False, name = trail_name).add_to(m)
+        #folium.GeoJson(points_trail[trail_name], style_function = lambda x:style, control = False, name = trail_name).add_to(m)
         
         #randomCol = randomHexColor()
-        style = {'color': "red"} 
+        #style = {'color': "red"} 
         
-        folium.GeoJson(progress_lines[trail_name], style_function = lambda x:style, control = True, name = trail_name + " Progress").add_to(m)
+        # folium.GeoJson(points_progress[trail_name], style_function = lambda x:style, control = True, name = trail_name + " Progress").add_to(m)
         
         folium.LatLngPopup().add_to(m)
 
@@ -244,6 +266,8 @@ def create_map(P):
     
     folium.LayerControl().add_to(m)
 
+    m.fit_bounds([[BB_LAT[0], BB_LON[0]], [BB_LAT[1], BB_LON[1]]])
+    
     currentDate = datetime.date.today().strftime("%m-%d-%Y")
     
     m.save("map_{date}.html".format(date = currentDate))

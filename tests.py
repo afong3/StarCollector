@@ -224,8 +224,7 @@ def test_5():
 
     print("------- END TEST 5 -------")
 
-# IN PROGRESS
-# summary of what it is, when it passes, etc. 
+# Creates a map from activities in a filepath.  
 def test_6():
     print("------- START TEST 6 -------")
     trails_path = "data/trails"
@@ -236,13 +235,21 @@ def test_6():
     
     df = global_functions.match_maps(E.points_combined, P.points_by_id)
     
-    for i in range(1, 43, 1):
+    points_total = 0 
+    points_total_matched = 0
+    
+    for i in range(1, len(P.trail_names) + 1, 1):
         trail_name = P.trail_names[i - 1] # -1 bedcause the df's trail count will be incremented length of total trails
         trail = P.trail[trail_name]
         trail_point_count = len(trail.points_list)
         trail_match_count = len(df[df[2] == i])
         P.trail[trail_name].points_matched = df[df[2] == i][[0,1]]
-    
+        
+        points_total += trail_point_count
+        points_total_matched += trail_match_count
+        
+        
+    print("{prog} of {total} Achieved".format(prog = points_total_matched, total = points_total))
     global_functions.create_map(P)
 
     print("------- END TEST 6 -------")
@@ -251,3 +258,4 @@ def test_6():
 
 if __name__ == "__main__":
     test_6()
+    

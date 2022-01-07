@@ -91,6 +91,7 @@ class Park:
                     
                     # assign Trail object to self.trail for future use
                     self.trail[trail.id] = trail
+                    
                 else:
                     continue
         
