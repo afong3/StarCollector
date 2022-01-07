@@ -270,4 +270,4 @@ def create_map(P):
     
     currentDate = datetime.date.today().strftime("%m-%d-%Y")
     
-    m.save("map_{date}.html".format(date = currentDate))
+    m.save("data/maps/map_{date}.html".format(date = currentDate))
