@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+
+<body>
 <head> 
 <script src="jquery.js"></script> 
 <script> 
@@ -8,8 +10,6 @@ $("#includedContent").load("b.html");
 });
 </script> 
 </head> 
-<body>
-
 <h2>My First JavaScript</h2>
 
 <button type="button"
