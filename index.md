@@ -7,6 +7,8 @@
 <button type="button"
 onclick="document.getElementById('demo').innerHTML = Date()">
 Click me to display Date and Time.</button>
+
+<div>
 <head>    
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     
@@ -7197,6 +7199,7 @@ Click me to display Date and Time.</button>
             );
         
 </script>
+</div>
 <p id="demo"></p>
 
 </body>
