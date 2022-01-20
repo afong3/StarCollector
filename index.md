@@ -17,13 +17,11 @@ onclick="document.getElementById('demo').innerHTML = Date()">
 Click me to display Date and Time.</button>
 
    <h2>Stars Collected: 119 of 239</h2>
-<html> 
 
 
-  <body> 
+
      <div id="includedContent"></div>
-  </body> 
-</html>
+
 
 <p id="demo"></p>
 
