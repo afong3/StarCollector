@@ -43,14 +43,11 @@
 onclick="document.getElementById('demo').innerHTML = Date()">
 Click me to display Date and Time.</button>
 
-   <h2>Stars Collected: 119 of 239</h2>
+   <h2>Stars Collected: 120 of 239</h2>
 
 
 
    <div class="folium-map" id="map_f81be1f6d3f64b86a2af11ace2b1d3e2" ></div>
-
-
-<p id="demo"></p>
 
 </body>
 </html> 
