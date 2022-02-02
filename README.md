@@ -1,6 +1,11 @@
 # mapMatcher
 I love Pacific Spirit Park in Vancouver. I want to create a tool that gets me into the park as much as possible. The idea is that this app will tell me the portion of trails that I need to run in order to complete an entire lap of the park. Not sure if it will be a cmd line or a simple Python GUI. Main purpose is to make an easy to use tool that will get me outside and work on a fun GIS-esque project. 
 
+# Example Map
+### Gold Stars have been collected, Red Stars have not
+<img src="data/maps/example_map.png" alt="Example Map" width="900" height="500"/>
+
+
 # Current State
 
 Right now, I can read the Strava data from Sarah and I to collect stars throughout PSP using tests.py and running test_7() in main. This means that the true function of the app works, if you record an activity that crosses a star, the program will recognize and display a different star on your map. 
