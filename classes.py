@@ -97,8 +97,8 @@ class Efforts:
 
         headers2 = {"Authorization": "Bearer {token}".format(token = self.user.accessToken)}
         print(headers2)
-        startYear = 2020
-        startMonth = 5
+        startYear = 2022
+        startMonth = 1
         startDay = 1
         d_start = datetime.datetime(startYear, startMonth, startDay, 0, 0) # 0 , 0 - (h, m)
         
@@ -108,7 +108,7 @@ class Efforts:
         today = datetime.datetime.today()
         
         beforeDate = calendar.timegm(today.timetuple())
-        params2 = {'per_page': 500, 'page':1, 'after':afterDate, 'before':beforeDate}
+        params2 = {'per_page': 200, 'page':1, 'after':afterDate, 'before':beforeDate}
         # params2 = {'after':afterDate}
         url2 = BASE_URL + "athlete/activities"
         response = requests.get(url2, params = params2, headers = headers2)
@@ -118,13 +118,14 @@ class Efforts:
         self.activities_list_json = response_json
         #parse activities into activity list
         self.activityIdList = []
-        self.sufferScoreList = []
+        #self.sufferScoreList = []
+        #print(response_json)
         for index in range(len(response_json)):
             activityId = response_json[index]['id']
             self.activityIdList.append(activityId)
             #print(activityId)
-            sufferScore = response_json[index]['suffer_score']
-            self.sufferScoreList.append(sufferScore)
+            #sufferScore = response_json[index]['suffer_score']
+            #self.sufferScoreList.append(sufferScore)
             
 
         print("Activities found: {count}".format(count = len(self.activityIdList)))
